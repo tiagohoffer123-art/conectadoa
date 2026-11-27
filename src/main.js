@@ -1,20 +1,26 @@
 import "./style.css";
+import { telaDoacoes } from "./pages/doacoes.js";
+import { telaDoadores } from "./pages/doadores.js";
 
 const app = document.querySelector("#app");
-app.innerHTML = `
-  <h1>ConectaDoa</h1>
-  <p>Status da API: <strong id="status">verificando...</strong></p>
-`;
 
-async function verificarApi() {
-  const status = document.querySelector("#status");
-  try {
-    const resposta = await fetch("/api/health");
-    const dados = await resposta.json();
-    status.textContent = `${dados.status} (${dados.hora})`;
-  } catch {
-    status.textContent = "API fora do ar";
+function mostrarApp() {
+  app.innerHTML = `
+    <header class="topo">
+      <strong>ConectaDoa</strong>
+      <nav>
+        <button data-tela="doadores">Doadores</button>
+        <button data-tela="doacoes">Doações</button>
+      </nav>
+    </header>
+    <div id="conteudo"></div>
+  `;
+  const conteudo = app.querySelector("#conteudo");
+  const telas = { doadores: telaDoadores, doacoes: telaDoacoes };
+  for (const botao of app.querySelectorAll("nav button")) {
+    botao.onclick = () => telas[botao.dataset.tela](conteudo);
   }
+  telaDoadores(conteudo);
 }
 
-verificarApi();
+mostrarApp();
