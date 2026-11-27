@@ -16,3 +16,6 @@ dist-ssr
 
 # Variáveis de ambiente
 .env
+
+# Backup do banco (contém dados pessoais)
+backup*.sql
