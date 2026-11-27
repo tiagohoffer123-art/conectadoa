@@ -1,0 +1,46 @@
+### Saúde da API (pública)
+GET http://localhost:3000/api/health
+
+### Sem token: deve responder 401
+POST http://localhost:3000/api/doadores
+Content-Type: application/json
+
+{ "nome": "Teste sem token" }
+
+### Login com senha errada: deve responder 401
+POST http://localhost:3000/api/auth/login
+Content-Type: application/json
+
+{ "email": "voluntario@exemplo.com", "senha": "errada" }
+
+### Login correto: guarda o token na variável "login"
+# @name login
+POST http://localhost:3000/api/auth/login
+Content-Type: application/json
+
+{ "email": "voluntario@exemplo.com", "senha": "conectadoa123" }
+
+###
+@token = {{login.response.body.token}}
+
+### Com token: lista doadores (200)
+GET http://localhost:3000/api/doadores
+Authorization: Bearer {{token}}
+
+### Com token: cadastra doador (201)
+POST http://localhost:3000/api/doadores
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "nome": "Doador do teste", "email": "teste@exemplo.com" }
+
+### Com token: catálogo de itens (200)
+GET http://localhost:3000/api/itens
+Authorization: Bearer {{token}}
+
+### Com token: registra doação com dois itens (201)
+POST http://localhost:3000/api/doacoes
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "id_doador": 1, "data_doacao": "2026-11-27", "observacao": "Teste", "itens": [{ "id_item": 1, "quantidade": 3 }, { "id_item": 5, "quantidade": 6 }] }

@@ -1,13 +1,20 @@
 import "dotenv/config";
 import express from "express";
 import db from "./db.js";
+import auth, { autenticar } from "./auth.js";
 import doadores from "./routes/doadores.js";
 import itens from "./routes/itens.js";
 import doacoes from "./routes/doacoes.js";
 
+if (!process.env.JWT_SECRET) {
+  console.error("Defina JWT_SECRET no arquivo .env");
+  process.exit(1);
+}
+
 const app = express();
 app.use(express.json());
 
+// Rotas públicas
 app.get("/api/health", async (req, res) => {
   const hora = new Date().toISOString();
   try {
@@ -17,7 +24,10 @@ app.get("/api/health", async (req, res) => {
     res.status(500).json({ status: "ok", app: "ConectaDoa", banco: "erro", hora });
   }
 });
+app.use("/api/auth", auth);
 
+// Daqui para baixo, toda rota exige token
+app.use("/api", autenticar);
 app.use("/api/doadores", doadores);
 app.use("/api/itens", itens);
 app.use("/api/doacoes", doacoes);
